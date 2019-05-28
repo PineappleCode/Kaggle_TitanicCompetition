@@ -1,0 +1,46 @@
+#  << PREDICTING DEATHS/SURVIVAL USING CLASS AND SEX KNN>>
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sklearn as sk
+from sklearn import linear_model, preprocessing, model_selection, neighbors
+from sklearn.neighbors import KNeighborsClassifier
+
+#Importing Trainig Dataset
+training_dataset = pd.read_csv("titanic/train.csv")
+#Importing Test Dataset
+test_dataset = pd.read_csv("titanic/test.csv")
+
+#Organizing data <<TRAINING>>
+pclass = training_dataset.Pclass
+sex = training_dataset.Sex
+age = training_dataset.Age
+srv = training_dataset.Survived #predidcting variable
+
+#Classifying the data <<TRAINING>>
+le = preprocessing.LabelEncoder()
+sex = le.fit_transform(list(training_dataset.Sex))
+x = list(zip(sex, pclass))
+y = list(srv)
+
+#Training the model using training data
+model = KNeighborsClassifier(n_neighbors = 2)
+model.fit(x,y)
+acc = model.score(x,y)
+print(acc)
+
+#From the test dataset --> for independant variables
+pclasst = test_dataset.Pclass
+sext1 = test_dataset.Sex
+sext = le.fit_transform(list(test_dataset.Sex))
+z = list(zip(sext, pclasst))
+
+#Predicting the dependant variable using Z
+predict = model.predict(z)
+
+#for loop for output
+idx = test_dataset.PassengerId
+name = ['Death','Survive']
+for i in range(len(predict)):
+    print(idx[i], '\nSex: \t\t', sext1[i], '\nClass: \t\t', pclasst[i], '\nPredicted: \t', name[predict[i]],'\n')
